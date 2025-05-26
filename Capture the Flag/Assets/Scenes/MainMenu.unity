@@ -169,6 +169,7 @@ MonoBehaviour:
   - {r: 0.39101997, g: 0.9528302, b: 0.5974877, a: 1}
   - {r: 1, g: 0.950763, b: 0.3820755, a: 1}
   m_TeamCount: 2
+  TeamSize: 0
   CharacterPrefab: {fileID: 6147668332688422656, guid: 441162bc52becc74bb4bdf776214914f, type: 3}
 --- !u!1 &38280750
 GameObject:

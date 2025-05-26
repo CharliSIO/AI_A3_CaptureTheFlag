@@ -11,8 +11,7 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager m_Instance;
 
-    // get instance
-    // game manager is singleton
+    // get instance, game manager is singleton
     public static GameManager Instance
     {
         get
@@ -45,16 +44,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     public List<Team> m_Teams = new();
     public List<Color> m_TeamColourList = new() { Color.red, Color.blue, Color.green, Color.yellow };
+    
     private Field m_Field;
-
+    public Field Field { get => m_Field; set => m_Field = value; }
+    
     [SerializeField] private int m_TeamCount = 2; // default 2 teams
     public int TeamCount {get => m_TeamCount;}
     public int TeamSize; // encapsulate later
 
-    public Field Field { get => m_Field; set => m_Field = value; }
+    public AgentSharedMemory AgentMemory;
 
     [SerializeField] private GameObject CharacterPrefab;
 
@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
+    #region Create Main Game Scene 
 
     public void LoadGameField()
     {
@@ -100,10 +102,15 @@ public class GameManager : MonoBehaviour
                 m_Teams[i].m_TeamMembers.Add(newAgent);
             }
         }
-    }
 
+        AgentMemory = AgentSharedMemory.Instance;
+    }
+    #endregion
+
+    #region Menu Functions
     public void SetTeamCountFour() { m_TeamCount = 4; }
     public void SetTeamCountTwo() { m_TeamCount = 2; }
+    #endregion
 }
 
 public class Team
