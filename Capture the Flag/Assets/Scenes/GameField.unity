@@ -370,7 +370,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_iZoneCount: 2
-  m_v2FieldSize: {x: 20, y: 10}
   m_FieldZonePrefab: {fileID: 3996948849383436647, guid: ea51b5ebbcecfbb49b2953afa14fec58, type: 3}
   m_FieldZones: []
 --- !u!4 &1170296982

@@ -5,7 +5,6 @@ using UnityEngine;
 public class Field : MonoBehaviour
 {
     [SerializeField] private int m_iZoneCount = 2;
-    [SerializeField] private Vector2 m_v2FieldSize;
     [SerializeField] private FieldZone m_FieldZonePrefab; // Assign in Inspector
 
     public List<FieldZone> m_FieldZones = new();
@@ -15,7 +14,6 @@ public class Field : MonoBehaviour
         GameManager.Instance.Field = this;
 
         m_iZoneCount = GameManager.Instance.TeamCount;
-        m_v2FieldSize = this.gameObject.transform.localScale;
 
         for (int i = 0; i < m_iZoneCount; i++)
         {
@@ -37,5 +35,15 @@ public class Field : MonoBehaviour
 
             m_FieldZones.Add(zoneInstance);
         }
+    }
+
+    public FieldZone GetTeamZone(Team _team)
+    {
+        foreach (var t in m_FieldZones)
+        {
+            if (t.OwningTeam == _team) return t;
+        }
+
+        return m_FieldZones[0];
     }
 }

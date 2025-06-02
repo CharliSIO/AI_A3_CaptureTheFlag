@@ -20,4 +20,9 @@ public class FieldZone : Zone
 {
     public FlagZone m_FlagZone;
     public PrisonZone m_Prison;
+
+    public bool IsPosInField(Vector3 _point)
+    {
+        return ZoneBoundary.Contains(_point);
+    }
 }
