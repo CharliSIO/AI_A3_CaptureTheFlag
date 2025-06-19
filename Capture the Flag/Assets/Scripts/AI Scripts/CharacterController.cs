@@ -27,11 +27,12 @@ public class CharacterController : MonoBehaviour
     public CircleCollider2D m_DetectionRadius;
 
     public float m_Speed = 2.0f;
-    public float m_MaxSpeed = 5.0f;
-    public float m_MaxSteeringForce = 3.0f;
+    public float m_MaxSpeed = 3.0f;
+    public float m_MaxSteeringForce = 2.0f;
 
     public BehaviourState m_CurrentState;
     public Team m_Team;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected virtual void Start()
@@ -50,5 +51,16 @@ public class CharacterController : MonoBehaviour
         Vector2.ClampMagnitude(m_Velocity, m_MaxSpeed);
         m_Position += m_Speed * Time.deltaTime * m_Velocity;
         this.gameObject.transform.position = (Vector3)m_Position;
+    }
+
+    public void FlagReturned()
+    {
+        gameObject.GetComponent<Character>().m_HoldingFlag.FlagChangedTeam();
+        gameObject.GetComponent<Character>().m_HoldingFlag = null;
+        m_CurrentState = BehaviourState.EBS_NEUTRAL;
+        if (TryGetComponent<AgentController>(out var cont))
+        {
+            cont.DecideCurrentState();
+        }
     }
 }

@@ -20,8 +20,10 @@ public class GameManager : SingletonPersistent<GameManager>
     [SerializeField] private int m_TeamCount = 2; // default 2 teams
     public int TeamCount {get => m_TeamCount;}
     public int TeamSize = 4; // encapsulate later
+    public int FlagCount = 4;
 
     [SerializeField] private GameObject CharacterPrefab;
+    public GameObject FlagPrefab;
 
     private void Start()
     {
@@ -74,6 +76,7 @@ public class GameManager : SingletonPersistent<GameManager>
                     PlayerFollowCam.Follow = newAgent.transform;
                 }
             }
+            m_Teams[i].m_Zone.m_FlagZone.CreateFlags();
         }
     }
     #endregion
@@ -95,9 +98,4 @@ public class Team
     public int MembersInPrison = 0;
     public int MembersDefending = 0;
     public int MembersAttacking = 0;
-}
-
-public class Flag
-{
-
 }

@@ -6,6 +6,8 @@ public class Character : MonoBehaviour
     public Team m_Team;
     public Team m_ImprisonedBy = null;
 
+    public Flag m_HoldingFlag = null;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

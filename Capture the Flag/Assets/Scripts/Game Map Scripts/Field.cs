@@ -33,6 +33,7 @@ public class Field : MonoBehaviour
 
             zoneInstance.OwningTeam = GameManager.Instance.m_Teams[i];
             zoneInstance.OwningTeam.m_Zone = zoneInstance;
+            zoneInstance.Setup();
 
             m_FieldZones.Add(zoneInstance);
         }

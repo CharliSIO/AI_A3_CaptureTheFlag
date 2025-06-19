@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5059112820359515434}
   - component: {fileID: 948948645837463500}
   - component: {fileID: 4365222413752638681}
+  - component: {fileID: 505043546198008625}
   m_Layer: 0
   m_Name: FlagArea
   m_TagString: Untagged
@@ -45,9 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8e3e45d5648b1d4d965701053cbc38d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ZoneBounds:
+  ZoneBoundary:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  m_ContainedFlags: []
 --- !u!212 &4365222413752638681
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -103,6 +105,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &505043546198008625
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2566166341152955449}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &3614898801223228962
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79a259e4a46569b49898cf66a46f28ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ZoneBounds:
+  ZoneBoundary:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_FlagZone: {fileID: 948948645837463500}
@@ -255,9 +303,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8759741ffad461147a0023e9041288c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ZoneBounds:
+  ZoneBoundary:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 1, y: 1, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
   m_ContainedCharacters: []
 --- !u!212 &8065327566427830522
 SpriteRenderer:

@@ -172,7 +172,9 @@ MonoBehaviour:
   PlayerFollowCam: {fileID: 1876039909}
   m_TeamCount: 2
   TeamSize: 4
+  FlagCount: 4
   CharacterPrefab: {fileID: 6147668332688422656, guid: 441162bc52becc74bb4bdf776214914f, type: 3}
+  FlagPrefab: {fileID: 5554881837630916759, guid: b1fb924c97267ef43b31b646bdf56229, type: 3}
 --- !u!1 &38280750
 GameObject:
   m_ObjectHideFlags: 0

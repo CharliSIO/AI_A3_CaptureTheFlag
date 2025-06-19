@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 6944494139529076459}
   - component: {fileID: 1941727878502754891}
   - component: {fileID: 4196497264753840573}
+  - component: {fileID: 1404573986568093338}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -136,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Controller: {fileID: 6944494139529076459}
+  m_HoldingFlag: {fileID: 0}
 --- !u!114 &6944494139529076459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,10 +153,10 @@ MonoBehaviour:
   m_Velocity: {x: 0, y: 0}
   m_SteeringForce: {x: 0, y: 0}
   m_Position: {x: 0, y: 0}
-  m_DetectionRadius: {fileID: 4196497264753840573}
+  m_DetectionRadius: {fileID: 0}
   m_Speed: 2
-  m_MaxSpeed: 5
-  m_MaxSteeringForce: 3
+  m_MaxSpeed: 3
+  m_MaxSteeringForce: 2
   m_CurrentState: 0
   m_SeekForceWeighting: 1
   m_FleeForceWeighting: 1
@@ -186,10 +188,10 @@ MonoBehaviour:
   m_Velocity: {x: 0, y: 0}
   m_SteeringForce: {x: 0, y: 0}
   m_Position: {x: 0, y: 0}
-  m_DetectionRadius: {fileID: 4196497264753840573}
+  m_DetectionRadius: {fileID: 0}
   m_Speed: 2
-  m_MaxSpeed: 5
-  m_MaxSteeringForce: 3
+  m_MaxSpeed: 3
+  m_MaxSteeringForce: 2
   m_CurrentState: 0
   m_SeekForceWeighting: 1
   m_FleeForceWeighting: 1
@@ -241,3 +243,30 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 2
+--- !u!50 &1404573986568093338
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6147668332688422656}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

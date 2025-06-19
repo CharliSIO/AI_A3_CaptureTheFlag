@@ -40,7 +40,7 @@ public class AgentController : CharacterController
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     override protected void Start()
     {
-        StartCoroutine(UpdateStates(2.0f)); // update states only once every 2 seconds
+        StartCoroutine(UpdateStates(1.0f)); // update states only once every 2 seconds
     }
 
     private void Update()
@@ -64,8 +64,10 @@ public class AgentController : CharacterController
             case BehaviourState.EBS_IN_PRISON:
                 break;
             case BehaviourState.EBS_RETURNING_FROM_PRISON:
+                ReturnPrison();
                 break;
             case BehaviourState.EBS_RETURNING_WITH_FLAG:
+                ReturnFlag();
                 break;
             case BehaviourState.EBS_CHASE_ENEMY:
                 break;
@@ -217,17 +219,21 @@ public class AgentController : CharacterController
     }
 
     // choose which state based on the rules - mix of weighting and random element
-    void DecideCurrentState()
+    public void DecideCurrentState()
     {
         UpdateDecisionWeightings();
 
-        List<DecisionWeightings> valueRanges = new();
+        if (m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON || m_CurrentState == BehaviourState.EBS_RETURNING_WITH_FLAG)
+            return;
 
-        valueRanges.Add(new(0.0f, m_SeekPrisonWeight, BehaviourState.EBS_SEEK_PRISON));
-        valueRanges.Add(new(m_SeekPrisonWeight, m_SeekPrisonWeight + m_SeekFlagsWeight, BehaviourState.EBS_SEEK_FLAGS));
-        valueRanges.Add(new(m_SeekFlagsWeight, m_SeekFlagsWeight + m_DefendPrisonWeight, BehaviourState.EBS_DEFEND_PRISON));
-        valueRanges.Add(new(m_DefendPrisonWeight, m_DefendPrisonWeight + m_DefendFlagsWeight, BehaviourState.EBS_DEFEND_FLAGS));
-        valueRanges.Add(new(m_DefendFlagsWeight, m_DefendFlagsWeight + m_ChaseEnemyWeight, BehaviourState.EBS_CHASE_ENEMY));
+        List<DecisionWeightings> valueRanges = new()
+        {
+            new(0.0f, m_SeekPrisonWeight, BehaviourState.EBS_SEEK_PRISON),
+            new(m_SeekPrisonWeight, m_SeekPrisonWeight + m_SeekFlagsWeight, BehaviourState.EBS_SEEK_FLAGS),
+            new(m_SeekFlagsWeight, m_SeekFlagsWeight + m_DefendPrisonWeight, BehaviourState.EBS_DEFEND_PRISON),
+            new(m_DefendPrisonWeight, m_DefendPrisonWeight + m_DefendFlagsWeight, BehaviourState.EBS_DEFEND_FLAGS),
+            new(m_DefendFlagsWeight, m_DefendFlagsWeight + m_ChaseEnemyWeight, BehaviourState.EBS_CHASE_ENEMY)
+        };
 
         float totalWeightingValues = valueRanges.Last().maxVal;
 
@@ -250,7 +256,7 @@ public class AgentController : CharacterController
     {
         m_TargetPos = TeamToRescueFrom.m_Zone.m_Prison.transform.position;
 
-        if (TeamToRescueFrom.m_Zone.m_Prison.ZoneBoundary.Contains(m_Position))
+        if ((m_TargetPos - m_Position).sqrMagnitude <= 2.0f)
         {
             m_CurrentState = BehaviourState.EBS_RETURNING_FROM_PRISON;
             AgentSharedMemory.Instance.RescueTeamMember(m_Team, TeamToRescueFrom);
@@ -290,6 +296,16 @@ public class AgentController : CharacterController
     private void InPrison()
     {
 
+    }
+
+    private void ReturnFlag()
+    {
+        m_TargetPos = m_Team.m_Zone.m_FlagZone.transform.position;
+    }
+    private void ReturnPrison()
+    {
+        m_TargetPos = m_Team.m_Zone.transform.position;
+        if ((m_TargetPos - m_Position).sqrMagnitude <= 9.0f) m_CurrentState = BehaviourState.EBS_NEUTRAL;
     }
 
     #endregion
