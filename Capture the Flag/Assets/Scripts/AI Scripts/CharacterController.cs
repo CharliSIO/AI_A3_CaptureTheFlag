@@ -15,6 +15,7 @@ public enum BehaviourState
     EBS_IN_PRISON,
     EBS_RETURNING_FROM_PRISON,
     EBS_RETURNING_WITH_FLAG,
+    EBS_CHASE_ENEMY,
 }
 
 public class CharacterController : MonoBehaviour
@@ -23,24 +24,31 @@ public class CharacterController : MonoBehaviour
     public Vector2 m_Velocity;
     public Vector2 m_SteeringForce;
     public Vector2 m_Position;
-    public Collider2D m_Collider;
+    public CircleCollider2D m_DetectionRadius;
 
-    public float m_Speed = 0.0f;
-    public float m_MaxSpeed = 10.0f;
-    public float m_MaxSteeringForce = 10.0f;
+    public float m_Speed = 2.0f;
+    public float m_MaxSpeed = 5.0f;
+    public float m_MaxSteeringForce = 3.0f;
 
     public BehaviourState m_CurrentState;
     public Team m_Team;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected virtual void Start()
     {
-        
+        m_Position = this.gameObject.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    protected void MoveCharacter()
+    {
+        Vector2.ClampMagnitude(m_Velocity, m_MaxSpeed);
+        m_Position += m_Speed * Time.deltaTime * m_Velocity;
+        this.gameObject.transform.position = (Vector3)m_Position;
     }
 }

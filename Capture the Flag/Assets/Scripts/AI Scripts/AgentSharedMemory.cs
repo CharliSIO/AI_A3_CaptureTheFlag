@@ -1,5 +1,20 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+public struct DecisionWeightings
+{
+    public float minVal;
+    public float maxVal;
+    public BehaviourState state;
+
+    public DecisionWeightings(float _min, float _max, BehaviourState _state)
+    {
+        minVal = _min;
+        maxVal = _max;
+        state = _state;
+    }
+}
 
 public class AgentSharedMemory : Singleton<AgentSharedMemory>
 {
@@ -49,4 +64,21 @@ public class AgentSharedMemory : Singleton<AgentSharedMemory>
             }
         }
     }
+
+    public void RescueTeamMember(Team _teamRescuing, Team _teamOwningPrison)
+    {
+        foreach (var c in _teamRescuing.m_TeamMembers)
+        {
+            var character = c.GetComponent<Character>();
+            if (character.m_Controller.m_CurrentState == BehaviourState.EBS_IN_PRISON)
+            {
+                if (_teamRescuing.m_Zone.m_Prison.m_ContainedCharacters.Contains(character))
+                {
+                    character.m_Controller.m_CurrentState = BehaviourState.EBS_RETURNING_FROM_PRISON;
+                    _teamRescuing.m_Zone.m_Prison.m_ContainedCharacters.Remove(character);
+                }
+            }
+        }
+    }
+
 }

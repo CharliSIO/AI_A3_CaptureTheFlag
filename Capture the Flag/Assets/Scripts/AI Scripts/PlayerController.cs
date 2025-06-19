@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class AgentController : CharacterController
+public class PlayerController : CharacterController
 {
 
     #region Weighting Variables
@@ -33,53 +33,45 @@ public class AgentController : CharacterController
 
     #region Locomotion Variables
     [SerializeField] private Vector2 m_TargetPos;
-    [SerializeField] private Vector2 m_FleeTargetPos;
     [SerializeField] private Character m_TargetCharacter;
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     override protected void Start()
     {
-        StartCoroutine(UpdateStates(2.0f)); // update states only once every 2 seconds
+        base.Start();
+        //StartCoroutine(UpdateStates(2.0f)); // update states only once every 2 seconds
     }
 
     private void Update()
     {
-        switch (m_CurrentState)
+        Vector2 moveInput = new();
+        if (Input.GetKey(KeyCode.W))
         {
-            case BehaviourState.EBS_NEUTRAL:
-                break;
-            case BehaviourState.EBS_SEEK_PRISON:
-                SeekPrison();
-                break;
-            case BehaviourState.EBS_SEEK_FLAGS:
-                SeekFlags();
-                break;
-            case BehaviourState.EBS_DEFEND_PRISON:
-                DefendPrison();
-                break;
-            case BehaviourState.EBS_DEFEND_FLAGS:
-                DefendFlags();
-                break;
-            case BehaviourState.EBS_IN_PRISON:
-                break;
-            case BehaviourState.EBS_RETURNING_FROM_PRISON:
-                break;
-            case BehaviourState.EBS_RETURNING_WITH_FLAG:
-                break;
-            case BehaviourState.EBS_CHASE_ENEMY:
-                break;
-            default:
-                break;
+            moveInput.y += 1;
         }
+        if (Input.GetKey(KeyCode.S))
+        {
+            moveInput.y -= 1;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            moveInput.x -= 1;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            moveInput.x += 1;
+        }
+        moveInput.Normalize();
 
-        m_SteeringForce = Vector2.zero;
-        m_SteeringForce += Seek(m_TargetPos);
+        if (moveInput != Vector2.zero)
+        {
+            m_SteeringForce = Vector2.zero;
+            m_SteeringForce += Seek(m_Position + moveInput);
 
-        Vector2.ClampMagnitude(m_SteeringForce, m_MaxSteeringForce);
-        m_Velocity += m_SteeringForce;
-        MoveCharacter();
-        //m_Velocity += Flee(m_FleeTargetPos);
+            m_Velocity += m_SteeringForce;
+            MoveCharacter();
+        }
     }
 
     // coroutine that calls the update states - so not every frame
@@ -89,7 +81,6 @@ public class AgentController : CharacterController
         {
             UnityEngine.Random.InitState(RandomiserNumber + (int)(Time.time * Time.deltaTime));
             DecideCurrentState();
-
             yield return new WaitForSeconds(_time + UnityEngine.Random.Range(0.1f, 0.5f));
         }
     }
@@ -107,7 +98,7 @@ public class AgentController : CharacterController
 
     Vector2 Flee(Vector2 _targetPos)
     {
-        return CalculateSteeringForce((m_Position - _targetPos).normalized * m_MaxSpeed, m_FleeForceWeighting);
+        return CalculateSteeringForce((m_Position - _targetPos) * m_MaxSpeed, m_SeekForceWeighting);
     }
 
     // TODO
@@ -143,7 +134,7 @@ public class AgentController : CharacterController
         m_SeekFlagsWeight = UnityEngine.Random.Range(0.5f, 2.0f) + (m_CurrentState == BehaviourState.EBS_SEEK_FLAGS ? 1.0f : 0.0f);
         m_DefendPrisonWeight = UnityEngine.Random.Range(0.1f, 1.0f) + (m_CurrentState == BehaviourState.EBS_DEFEND_PRISON ? 1.0f : 0.0f);
         m_DefendFlagsWeight = UnityEngine.Random.Range(0.1f, 1.0f) + (m_CurrentState == BehaviourState.EBS_DEFEND_FLAGS ? 1.0f : 0.0f); 
-        m_ChaseEnemyWeight = 0.0f; 
+        m_ChaseEnemyWeight = UnityEngine.Random.Range(0.1f, 1.0f) + (m_CurrentState == BehaviourState.EBS_CHASE_ENEMY ? 1.0f : 0.0f); 
 
 
         // check shared memory to see what other team members are doing
@@ -209,11 +200,7 @@ public class AgentController : CharacterController
                 }
             }
             m_SeekPrisonWeight += mostPrisoners * 2.0f + prisonsHoldingTeammates.Count;
-            TeamToRescueFrom = bestRescueMission;
         }
-        else m_SeekPrisonWeight = 0.0f;
-
-        TeamToSeekFlags = bestTeamAttack;
     }
 
     // choose which state based on the rules - mix of weighting and random element
@@ -249,42 +236,23 @@ public class AgentController : CharacterController
     private void SeekPrison()
     {
         m_TargetPos = TeamToRescueFrom.m_Zone.m_Prison.transform.position;
-
-        if (TeamToRescueFrom.m_Zone.m_Prison.ZoneBoundary.Contains(m_Position))
-        {
-            m_CurrentState = BehaviourState.EBS_RETURNING_FROM_PRISON;
-            AgentSharedMemory.Instance.RescueTeamMember(m_Team, TeamToRescueFrom);
-        }
+        Seek(m_TargetPos);
     }
 
     private void SeekFlags()
     {
-        m_TargetPos = TeamToSeekFlags.m_Zone.m_FlagZone.transform.position;
+        m_TargetPos = TeamToRescueFrom.m_Zone.m_FlagZone.transform.position;
+        Seek(m_TargetPos);
     }
 
     private void DefendPrison()
     {
-        m_TargetPos = m_Team.m_Zone.m_Prison.transform.position;
+
     }
 
     private void DefendFlags()
     {
-        //Vector3 vectorToPrison = (Vector2)m_Team.m_Zone.m_Prison.transform.position - m_Position;
 
-        //if ((vectorToPrison).sqrMagnitude <= 25.0f)
-        //{
-        //    if (Mathf.Sin(2 * Time.time) >=0)
-        //    {
-        //        m_TargetPos = (Vector3)m_Position + Vector3.Cross(vectorToPrison.normalized, Vector3.forward).normalized;
-        //    }
-        //    else
-        //    {
-        //        m_TargetPos = (Vector3)m_Position + -Vector3.Cross(vectorToPrison.normalized, Vector3.forward).normalized;
-        //    }
-        //}
-        //else { m_TargetPos = m_Team.m_Zone.m_Prison.transform.position; }
-
-        m_TargetPos = m_Team.m_Zone.m_Prison.transform.position;
     }
 
     private void InPrison()

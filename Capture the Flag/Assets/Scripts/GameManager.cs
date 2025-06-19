@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,7 @@ public class GameManager : SingletonPersistent<GameManager>
 {
     public List<Team> m_Teams = new();
     public List<Color> m_TeamColourList = new() { Color.red, Color.blue, Color.green, Color.yellow };
+    public CinemachineCamera PlayerFollowCam;
     
     private Field m_Field;
     public Field Field { get => m_Field; set => m_Field = value; }
@@ -54,11 +56,23 @@ public class GameManager : SingletonPersistent<GameManager>
             {
                 var newAgent = Instantiate(CharacterPrefab);
                 Color teamColour = m_Teams[i].TeamColour;
+                newAgent.name = "Team " + i + " Member " + j.ToString();
+
                 newAgent.GetComponentInChildren<SpriteRenderer>().color = new(teamColour.r * 1.5f, teamColour.g * 1.5f, teamColour.b * 1.5f, teamColour.a * 2f);
                 newAgent.transform.position = new Vector3(
                 (i == 1 || i == 3 ? 5f : -5f) + j/2f, (m_TeamCount > 2 ? (i == 2 || i == 3 ? -2.5f : 2.5f) : 0.0f) + j / 2f, -1.0f);
                 newAgent.GetComponent<Character>().m_Team = m_Teams[i];
+                newAgent.GetComponent<AgentController>().RandomiserNumber = i + j;
+                newAgent.GetComponent<PlayerController>().enabled = false;
                 m_Teams[i].m_TeamMembers.Add(newAgent);
+
+                if (i == 0 && j == 0)
+                {
+                    newAgent.GetComponent<AgentController>().enabled = false;
+                    newAgent.GetComponent<PlayerController>().enabled = true;
+                    newAgent.GetComponent<Character>().m_Controller = newAgent.GetComponent<PlayerController>();
+                    PlayerFollowCam.Follow = newAgent.transform;
+                }
             }
         }
     }
@@ -72,7 +86,11 @@ public class GameManager : SingletonPersistent<GameManager>
 
 public class Team
 {
+    public FieldZone m_Zone;
+
     public List<GameObject> m_TeamMembers = new();
+    public List<Flag> m_Flags = new();
+
     public Color TeamColour;
     public int MembersInPrison = 0;
     public int MembersDefending = 0;

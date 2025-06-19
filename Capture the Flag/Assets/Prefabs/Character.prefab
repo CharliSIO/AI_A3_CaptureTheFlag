@@ -97,7 +97,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9065368403947518688}
   - component: {fileID: 7671202033344327686}
-  - component: {fileID: 7979457257645139045}
+  - component: {fileID: 6944494139529076459}
+  - component: {fileID: 1941727878502754891}
+  - component: {fileID: 4196497264753840573}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -133,9 +135,78 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b29145bb4bea354994cc3ef6a6e038b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Controller: {fileID: 0}
---- !u!61 &7979457257645139045
-BoxCollider2D:
+  m_Controller: {fileID: 6944494139529076459}
+--- !u!114 &6944494139529076459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6147668332688422656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77837e5bc2bb70f47bd1bbcf6db5a496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Velocity: {x: 0, y: 0}
+  m_SteeringForce: {x: 0, y: 0}
+  m_Position: {x: 0, y: 0}
+  m_DetectionRadius: {fileID: 4196497264753840573}
+  m_Speed: 2
+  m_MaxSpeed: 5
+  m_MaxSteeringForce: 3
+  m_CurrentState: 0
+  m_SeekForceWeighting: 1
+  m_FleeForceWeighting: 1
+  m_ArriveForceWeighting: 1
+  m_SeparationForceWeighting: 1
+  m_CohesionForceWeighting: 1
+  m_AlignmentForceWeighting: 1
+  m_SeekPrisonWeight: 1
+  m_SeekFlagsWeight: 1
+  m_DefendPrisonWeight: 1
+  m_DefendFlagsWeight: 1
+  m_ChaseEnemyWeight: 1
+  RandomiserNumber: 0
+  m_TargetPos: {x: 0, y: 0}
+  m_FleeTargetPos: {x: 0, y: 0}
+  m_TargetCharacter: {fileID: 0}
+--- !u!114 &1941727878502754891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6147668332688422656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0974093b7dc6e404e8b3d2fef4a13f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Velocity: {x: 0, y: 0}
+  m_SteeringForce: {x: 0, y: 0}
+  m_Position: {x: 0, y: 0}
+  m_DetectionRadius: {fileID: 4196497264753840573}
+  m_Speed: 2
+  m_MaxSpeed: 5
+  m_MaxSteeringForce: 3
+  m_CurrentState: 0
+  m_SeekForceWeighting: 1
+  m_FleeForceWeighting: 1
+  m_ArriveForceWeighting: 1
+  m_SeparationForceWeighting: 1
+  m_CohesionForceWeighting: 1
+  m_AlignmentForceWeighting: 1
+  m_SeekPrisonWeight: 1
+  m_SeekFlagsWeight: 1
+  m_DefendPrisonWeight: 1
+  m_DefendFlagsWeight: 1
+  m_ChaseEnemyWeight: 1
+  RandomiserNumber: 0
+  m_TargetPos: {x: 0, y: 0}
+  m_TargetCharacter: {fileID: 0}
+--- !u!58 &4196497264753840573
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -168,15 +239,5 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.12}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1.1, y: 1.1}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2

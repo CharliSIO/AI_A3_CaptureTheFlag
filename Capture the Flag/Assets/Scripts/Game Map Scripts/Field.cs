@@ -32,6 +32,7 @@ public class Field : MonoBehaviour
             zoneInstance.GetComponent<SpriteRenderer>().color = GameManager.Instance.m_TeamColourList[i];
 
             zoneInstance.OwningTeam = GameManager.Instance.m_Teams[i];
+            zoneInstance.OwningTeam.m_Zone = zoneInstance;
 
             m_FieldZones.Add(zoneInstance);
         }
