@@ -36,6 +36,10 @@ public class AgentSharedMemory : Singleton<AgentSharedMemory>
         UpdateAgentStates();
     }
 
+    // check what everybody doing
+    // who on offence who on defence?
+    // i definitely could have implemented this much more efficiently
+    // but it's too late for that
     private void UpdateAgentStates()
     {
         AttackingAgents.Clear();
@@ -65,6 +69,9 @@ public class AgentSharedMemory : Singleton<AgentSharedMemory>
         }
     }
 
+    // a team member is being rescued!! hurrah!!
+    // make them both return from prison
+    // take it out of the prison lists n things
     public void RescueTeamMember(Team _teamRescuing, Team _teamOwningPrison)
     {
         foreach (var c in _teamRescuing.m_TeamMembers)

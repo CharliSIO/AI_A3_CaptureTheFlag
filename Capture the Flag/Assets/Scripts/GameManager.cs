@@ -1,5 +1,7 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -30,8 +32,26 @@ public class GameManager : SingletonPersistent<GameManager>
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
+    // wait until end of frame to change player so all calculations are done first
+    // dont mess up any references
+    public IEnumerator ChangePlayerAtEndOfFrame(Character _oldPlayer, int _newPlayer)
+    {
+        yield return new WaitForEndOfFrame();
+
+        _oldPlayer.PlayerContr.enabled = false;
+        _oldPlayer.AICont.enabled = true;
+        _oldPlayer.m_Controller = _oldPlayer.AICont;
+
+        Character newPlayer = _oldPlayer.m_Team.m_TeamMembers[_newPlayer - 1].GetComponent<Character>();
+        newPlayer.PlayerContr.enabled = true;
+        newPlayer.AICont.enabled = false;
+        newPlayer.m_Controller = newPlayer.PlayerContr;
+        PlayerFollowCam.Follow = newPlayer.transform;
+    }
+
     #region Create Main Game Scene 
 
+    // add the teams first
     public void LoadGameField()
     {
         for (int i = 0; i < m_TeamCount; i++)
@@ -44,12 +64,13 @@ public class GameManager : SingletonPersistent<GameManager>
 
     private void OnSceneLoaded(Scene _scene, LoadSceneMode _mode)
     {
-        if (_scene.name == "GameField")
+        if (_scene.name == "GameField") // now in game!
         {
             CreateGame();
         }
     }
 
+    // create the agents, the zones, make sure its in order n stuff
     public void CreateGame()
     {
         for (int i = 0; i < m_TeamCount; i++)
@@ -93,6 +114,10 @@ public class GameManager : SingletonPersistent<GameManager>
     #endregion
 }
 
+// its a team!
+// its just some vars
+// perhaps it could have been encapsulated better
+// oh well
 public class Team
 {
     public FieldZone m_Zone;

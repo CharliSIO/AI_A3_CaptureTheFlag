@@ -40,6 +40,7 @@ public class AgentController : CharacterController
 
     private void Update()
     {
+        // I'm very sorry this switch statement is not good
         switch (m_CurrentState)
         {
             case BehaviourState.EBS_NEUTRAL:
@@ -123,27 +124,11 @@ public class AgentController : CharacterController
         return Vector2.zero;
     }
 
-    // TODO
-    Vector2 Separation()
-    {
-        return new();
-    }
-
-    // TODO
-    Vector2 Cohesion()
-    {
-        return new();
-    }
-
-    // TODO
-    Vector2 Alignment()
-    {
-        return new();
-    }
-
     #endregion
 
     // update weightings based on rules
+    // rule-based with weightings
+    // also with randomness so it's not too rigid
     void UpdateDecisionWeightings()
     {
         m_SeekPrisonWeight = UnityEngine.Random.Range(0.5f, 2.0f) + (m_CurrentState == BehaviourState.EBS_SEEK_PRISON ? 1.0f : 0.0f );
@@ -176,6 +161,7 @@ public class AgentController : CharacterController
             }
         }
 
+        // decide what the best team to attack is (for the 4 team mode, which is less well balanced)
         Team bestTeamAttack = GameManager.Instance.m_Teams[0];
         int highestImprisoned = 0;
         float seekFWeight = 0;
@@ -193,6 +179,7 @@ public class AgentController : CharacterController
         if (bestTeamAttack == m_Team) bestTeamAttack = GameManager.Instance.m_Teams[1];
         m_SeekFlagsWeight += seekFWeight;
 
+        // check if team mates are in prison, and if so, which prison are they in?? for if theres 4 teams
         Dictionary<Team, int> prisonsHoldingTeammates = new();
         foreach (var a in m_Team.m_TeamMembers)
         {
@@ -220,10 +207,11 @@ public class AgentController : CharacterController
             m_SeekPrisonWeight += mostPrisoners * 2.0f + prisonsHoldingTeammates.Count;
             TeamToRescueFrom = bestRescueMission;
         }
-        else m_SeekPrisonWeight = 0.0f;
+        else m_SeekPrisonWeight = 0.0f; // if no team members are in prison then dont go rescue noone!!
 
         TeamToSeekFlags = bestTeamAttack;
 
+        // dont run away if you're close to the goal... silly things
         if (((Vector2)TeamToSeekFlags.m_Zone.m_FlagZone.transform.position - m_Position).sqrMagnitude <= 72.0f)
         {
             m_SeekFlagsWeight += 8.0f;
@@ -235,32 +223,42 @@ public class AgentController : CharacterController
         }
     }
 
+    // near another agent? should you chase the agent?
+    // don't chase your teammates!
+    // also if you have a flag or are coming back from prison, no cheating!
+    // go back to your zone first
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Character>(out var character))
         {
             if (character.m_Team == m_Team) return;
-            if (character.m_Controller.m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON) return;
+            if (character.m_Controller.m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON
+                || m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON) return;
 
-            if (m_Team.m_Zone.ZoneBoundary.Contains((Vector3)m_Position))
+            if (m_Team.m_Zone.ZoneBoundary.Contains(m_Position))
             {
+                if (m_CurrentState == BehaviourState.EBS_RETURNING_WITH_FLAG) return;
+
                 if (m_Team.m_Zone.ZoneBoundary.Contains((Vector2)character.GetPosition()))
                 {
                     m_TargetCharacter = character;
                     m_CurrentState = BehaviourState.EBS_CHASE_ENEMY;
                 }
             }
-            else if (character.m_Team.m_Zone.ZoneBoundary.Contains((Vector3)m_Position))
+            else if (character.m_Team.m_Zone.ZoneBoundary.Contains(m_Position))
             {
                 if (character.m_Team.m_Zone.ZoneBoundary.Contains(character.GetPosition()))
                 {
                     m_FleeCharacter = character;
-                    m_FleeForceWeighting = 2.0f;
+                    m_FleeForceWeighting = 3.0f;
                 }
             }
         }
     }
 
+    // theyre not nearby anymore!
+    // shame, stop chasing them then
+    // or stop running away if you were scared
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Character>(out var character))
@@ -279,16 +277,22 @@ public class AgentController : CharacterController
     }
 
     // choose which state based on the rules - mix of weighting and random element
+    // heres the randomness!
+    // for funsies
     public void DecideCurrentState()
     {
         UpdateDecisionWeightings();
 
+        // dont change state if youre in prison! or coming back
         if (m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON || m_CurrentState == BehaviourState.EBS_RETURNING_WITH_FLAG || 
             m_CurrentState == BehaviourState.EBS_IN_PRISON)
             return;
 
         if (GetComponent<Character>().m_HoldingFlag) { m_CurrentState = BehaviourState.EBS_RETURNING_WITH_FLAG; return; }
 
+        // oh ho ho this is funky
+        // setup for a random spin the wheel
+        // min + max value for the range, and the state associated
         List<DecisionWeightings> valueRanges = new()
         {
             new(0.0f, m_SeekPrisonWeight, BehaviourState.EBS_SEEK_PRISON),
@@ -298,28 +302,25 @@ public class AgentController : CharacterController
             new(m_DefendPrisonWeight + m_DefendFlagsWeight, m_DefendFlagsWeight + m_ChaseEnemyWeight, BehaviourState.EBS_CHASE_ENEMY)
         };
 
-        float totalWeightingValues = valueRanges.Last().maxVal;
+        float totalWeightingValues = valueRanges.Last().maxVal; // the range for the wheel!
 
         float chosenValue = UnityEngine.Random.Range(0.0f, totalWeightingValues);
 
+        // which state was chosen???
         for (int i = valueRanges.Count - 1; i >= 0; i--)
         {
             if (chosenValue >= valueRanges[i].minVal && chosenValue <= valueRanges[i].maxVal)
             {
                 m_CurrentState = valueRanges[i].state;
-                if (m_CurrentState == BehaviourState.EBS_DEFEND_FLAGS)
-                {
-                    Debug.Log(gameObject.name + "Defending flags " + chosenValue);
-                }
-                return;
+                return; // dont keep spinning the wheel if the prize has been chosen!
             }
         }
-        m_CurrentState = BehaviourState.EBS_SEEK_FLAGS;
+        m_CurrentState = BehaviourState.EBS_SEEK_FLAGS; // as a last resort, go get the flags
 
     }
 
-    #region States (FSM)
-    private void SeekPrison()
+    #region States 
+    private void SeekPrison() // its rescue mission time!
     {
         m_TargetPos = TeamToRescueFrom.m_Zone.m_Prison.transform.position;
         m_SeekForceWeighting = 1.0f;
@@ -331,22 +332,29 @@ public class AgentController : CharacterController
         }
     }
 
+    // trying to win this thing
+    // make sure seek force is up and can move
     private void SeekFlags()
     {
         m_TargetPos = TeamToSeekFlags.m_Zone.m_FlagZone.transform.position;
         m_SeekForceWeighting = 1.0f;
     }
 
+    // under attack! guard jail
     private void DefendPrison()
     {
         m_TargetPos = m_Team.m_Zone.m_Prison.transform.position;
     }
 
+    // guard those flags babey!
     private void DefendFlags()
     {
         m_TargetPos = m_Team.m_Zone.m_FlagZone.transform.position;
     }
 
+    // im gonna getchu
+    // chase the guy nearby
+    // watch them run
     private void ChaseEnemy()
     {
         m_TargetPos = m_TargetCharacter.GetPosition();
@@ -358,21 +366,20 @@ public class AgentController : CharacterController
         }
     }
 
-    private void InPrison()
-    {
-        m_SeekForceWeighting = 0.0f;
-        m_FleeForceWeighting = 0.0f;
-        m_ArriveForceWeighting = 0.0f;
-    }
-
+    // you got the flag!
+    // now get it home!
     private void ReturnFlag()
     {
         m_TargetPos = m_Team.m_Zone.m_FlagZone.transform.position;
     }
+    // walk of shame
+    // or maybe you rescued someone successfully
+    // either way, go home
+    // after that defend, let someone else do the dangerous work for once
     private void ReturnPrison()
     {
         m_TargetPos = m_Team.m_Zone.transform.position;
-        if ((m_TargetPos - m_Position).sqrMagnitude <= 9.0f) m_CurrentState = BehaviourState.EBS_NEUTRAL;
+        if ((m_TargetPos - m_Position).sqrMagnitude <= 9.0f) m_CurrentState = BehaviourState.EBS_DEFEND_FLAGS;
     }
 
     #endregion

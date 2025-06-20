@@ -11,6 +11,11 @@ public class Zone : MonoBehaviour
 
 }
 
+// i dont know why i split this up so much
+// but this is the field zone belonging to a team
+// it has a prison and a flag area
+// all inherit from zone
+// i will do it better next time AABBs caused me problems
 public class FieldZone : Zone
 {
     public FlagZone m_FlagZone;

@@ -8,6 +8,9 @@ public class Character : MonoBehaviour
 
     public Flag m_HoldingFlag = null;
 
+    public CharacterController AICont;
+    public CharacterController PlayerContr;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -25,6 +28,10 @@ public class Character : MonoBehaviour
         return transform.position;
     }
 
+    // go to prison
+    // in prison state
+    // position is now in prison
+    // velocity is zero
     public void GoToPrison(Team _ImprisonedBy)
     {
         if (m_HoldingFlag) DropFlag();
@@ -37,12 +44,15 @@ public class Character : MonoBehaviour
         m_Controller.m_Velocity = Vector2.zero;
     }
 
-
+    // hurrah! 
     public void EscapePrison()
     {
         m_Controller.EscapePrison();
     }
 
+    // you dropped the flag
+    // and been caught
+    // look what youve done
     public void DropFlag()
     {
         m_HoldingFlag.FlagDropped();

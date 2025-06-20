@@ -220,6 +220,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Controller: {fileID: 0}
   m_HoldingFlag: {fileID: 0}
+  AICont: {fileID: 6944494139529076459}
+  PlayerContr: {fileID: 1941727878502754891}
 --- !u!114 &6944494139529076459
 MonoBehaviour:
   m_ObjectHideFlags: 0

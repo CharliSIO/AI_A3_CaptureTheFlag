@@ -20,35 +20,34 @@ public class Flag : MonoBehaviour
     {
         if (CarryingCharacter)
         {
+            // move with character
             transform.position = CarryingCharacter.transform.position;
         }
     }
 
+    // ooh a collision
+    // someone come to pick the flag up?
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.name == "BodyCollider")
         {
             var character = collision.gameObject.GetComponentInParent<Character>();
+
+            // pick up if character exists, isnt holding a flag, isnt already carrying this flag, and is of a different team
             if (character && !character.m_HoldingFlag && !CarryingCharacter && character.m_Team != OwningTeam)
             {
                 CarryingCharacter = character;
                 character.m_HoldingFlag = this;
-                character.m_Controller.m_CurrentState = BehaviourState.EBS_RETURNING_WITH_FLAG;
+                character.m_Controller.m_CurrentState = BehaviourState.EBS_RETURNING_WITH_FLAG; // character got a flag!
                 OwningTeam.m_Zone.m_FlagZone.m_ContainedFlags.Remove(this);
-                PickupRadius.enabled = false;
+                PickupRadius.enabled = false; // disable pickup radius just in case!
             }
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent<Flag>(out Flag component) && !CarryingCharacter)
-        {
-            Vector3 difference = transform.position - collision.transform.position;
-            transform.position += difference.normalized;
-        }
-    }
-
+    // flag changed team!!
+    // disconnect from player carrying
+    // and change team and colour!
     public void FlagChangedTeam()
     {
         PickupRadius.enabled = true;
@@ -60,6 +59,9 @@ public class Flag : MonoBehaviour
         CarryingCharacter = null;
     }
 
+    // carrying player got tagged
+    // go home, little flag
+    // no change of team for you
     public void FlagDropped()
     {
         transform.position = m_StartPos;

@@ -26,10 +26,15 @@ public class FlagZone : Zone
         collision.gameObject.TryGetComponent<Character>(out var character);
         if (character && character.m_HoldingFlag && character.m_Team == OwningTeam)
         {
+            // so this was because they were returning it before the zone
+            // it might be fine because I fixed everything with the Bounds
+            // but I'm not gonna risk it
+            // so it stays
             StartCoroutine(ReturnFlagAfterTime(character.m_Controller));
         }
     }
 
+    // just drop it half a second later
     private IEnumerator ReturnFlagAfterTime(CharacterController _c)
     {
         yield return new WaitForSeconds(0.5f);

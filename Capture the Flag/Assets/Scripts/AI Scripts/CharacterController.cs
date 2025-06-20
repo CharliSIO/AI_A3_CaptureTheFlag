@@ -21,7 +21,7 @@ public enum BehaviourState
 
 public class CharacterController : MonoBehaviour
 {
-
+    // general controller things
     public Vector2 m_Velocity;
     public Vector2 m_SteeringForce;
     public Vector2 m_Position;
@@ -34,7 +34,7 @@ public class CharacterController : MonoBehaviour
     public BehaviourState m_CurrentState;
     public Team m_Team;
 
-
+    // locomotion weightings
     protected float m_SeekForceWeighting = 0.0f;
     protected float m_FleeForceWeighting = 0.0f;
     protected float m_ArriveForceWeighting = 1.0f;
@@ -50,12 +50,12 @@ public class CharacterController : MonoBehaviour
         m_Position = gameObject.transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected void OnEnable()
     {
-        
+        m_Team = gameObject.GetComponent<Character>().m_Team;
     }
 
+    // move the character
     protected virtual void MoveCharacter()
     {
         Vector2.ClampMagnitude(m_Velocity, m_MaxSpeed);
@@ -63,6 +63,7 @@ public class CharacterController : MonoBehaviour
         gameObject.transform.position = (Vector3)m_Position;
     }
 
+    // flag changed team!!
     public void FlagReturned()
     {
         gameObject.GetComponent<Character>().m_HoldingFlag.FlagChangedTeam();
@@ -74,10 +75,21 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    // you made it out of prison!!
+    // good job
     public void EscapePrison()
     {
         m_CurrentState = BehaviourState.EBS_RETURNING_FROM_PRISON;
         m_SeekForceWeighting = 1.0f;
         m_ArriveForceWeighting = 1.0f;
     }
+
+    // youre in prison.. less good job
+    protected void InPrison()
+    {
+        m_SeekForceWeighting = 0.0f;
+        m_FleeForceWeighting = 0.0f;
+        m_ArriveForceWeighting = 0.0f;
+    }
+    // ---------
 }
