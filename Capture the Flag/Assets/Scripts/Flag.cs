@@ -9,6 +9,12 @@ public class Flag : MonoBehaviour
     public Character CarryingCharacter;
 
     private Color m_Colour = Color.white;
+    private Vector2 m_StartPos;
+
+    private void Start()
+    {
+        m_StartPos = transform.position;
+    }
 
     private void Update()
     {
@@ -50,6 +56,14 @@ public class Flag : MonoBehaviour
         OwningTeam = CarryingCharacter.m_Team;
         gameObject.GetComponent<SpriteRenderer>().color = OwningTeam.TeamColour;
         OwningTeam.m_Flags.Add(this);
+        OwningTeam.m_Zone.m_FlagZone.m_ContainedFlags.Add(this);
+        CarryingCharacter = null;
+    }
+
+    public void FlagDropped()
+    {
+        transform.position = m_StartPos;
+        PickupRadius.enabled = true;
         OwningTeam.m_Zone.m_FlagZone.m_ContainedFlags.Add(this);
         CarryingCharacter = null;
     }

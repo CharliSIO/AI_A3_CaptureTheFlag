@@ -27,6 +27,8 @@ public class Character : MonoBehaviour
 
     public void GoToPrison(Team _ImprisonedBy)
     {
+        if (m_HoldingFlag) DropFlag();
+
         m_ImprisonedBy = _ImprisonedBy;
         m_Controller.m_CurrentState = BehaviourState.EBS_IN_PRISON;
         m_Controller.m_Position = (Vector2)m_ImprisonedBy.m_Zone.m_Prison.transform.position + new Vector2(Random.Range(0.15f, 0.35f), Random.Range(0.15f, 0.35f));
@@ -35,8 +37,15 @@ public class Character : MonoBehaviour
         m_Controller.m_Velocity = Vector2.zero;
     }
 
+
     public void EscapePrison()
     {
         m_Controller.EscapePrison();
+    }
+
+    public void DropFlag()
+    {
+        m_HoldingFlag.FlagDropped();
+        m_HoldingFlag = null;
     }
 }

@@ -240,6 +240,7 @@ public class AgentController : CharacterController
         if (collision.TryGetComponent<Character>(out var character))
         {
             if (character.m_Team == m_Team) return;
+            if (character.m_Controller.m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON) return;
 
             if (m_Team.m_Zone.ZoneBoundary.Contains((Vector3)m_Position))
             {
@@ -292,9 +293,9 @@ public class AgentController : CharacterController
         {
             new(0.0f, m_SeekPrisonWeight, BehaviourState.EBS_SEEK_PRISON),
             new(m_SeekPrisonWeight, m_SeekPrisonWeight + m_SeekFlagsWeight, BehaviourState.EBS_SEEK_FLAGS),
-            new(m_SeekFlagsWeight, m_SeekFlagsWeight + m_DefendPrisonWeight, BehaviourState.EBS_DEFEND_PRISON),
-            new(m_DefendPrisonWeight, m_DefendPrisonWeight + m_DefendFlagsWeight, BehaviourState.EBS_DEFEND_FLAGS),
-            new(m_DefendFlagsWeight, m_DefendFlagsWeight + m_ChaseEnemyWeight, BehaviourState.EBS_CHASE_ENEMY)
+            new(m_SeekPrisonWeight + m_SeekFlagsWeight, m_SeekFlagsWeight + m_DefendPrisonWeight, BehaviourState.EBS_DEFEND_PRISON),
+            new(m_SeekFlagsWeight + m_DefendPrisonWeight, m_DefendPrisonWeight + m_DefendFlagsWeight, BehaviourState.EBS_DEFEND_FLAGS),
+            new(m_DefendPrisonWeight + m_DefendFlagsWeight, m_DefendFlagsWeight + m_ChaseEnemyWeight, BehaviourState.EBS_CHASE_ENEMY)
         };
 
         float totalWeightingValues = valueRanges.Last().maxVal;
@@ -306,7 +307,10 @@ public class AgentController : CharacterController
             if (chosenValue >= valueRanges[i].minVal && chosenValue <= valueRanges[i].maxVal)
             {
                 m_CurrentState = valueRanges[i].state;
-                if (m_CurrentState == BehaviourState.EBS_DEFEND_FLAGS) Debug.Log(gameObject.name + "Defending flags " + chosenValue);
+                if (m_CurrentState == BehaviourState.EBS_DEFEND_FLAGS)
+                {
+                    Debug.Log(gameObject.name + "Defending flags " + chosenValue);
+                }
                 return;
             }
         }

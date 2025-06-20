@@ -10,6 +10,7 @@ public class TagPlayer : MonoBehaviour
             var ownController = GetComponentInParent<Character>().m_Controller;
             var otherController = collision.gameObject.GetComponentInParent<CharacterController>();
 
+            if (otherController.m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON) return;
             if (ownController.m_Team == otherController.m_Team) return;
 
             if (otherController.m_Team.m_Zone.ZoneBoundary.Contains(ownController.m_Position))
