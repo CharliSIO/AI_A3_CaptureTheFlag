@@ -48,6 +48,7 @@ public class CharacterController : MonoBehaviour
     protected virtual void Start()
     {
         m_Position = gameObject.transform.position;
+        GameManager.Instance.GameHasWinner.AddListener(EndGame);
     }
 
     protected void OnEnable()
@@ -92,4 +93,9 @@ public class CharacterController : MonoBehaviour
         m_ArriveForceWeighting = 0.0f;
     }
     // ---------
+
+    protected void EndGame()
+    {
+        this.enabled = false;
+    }
 }

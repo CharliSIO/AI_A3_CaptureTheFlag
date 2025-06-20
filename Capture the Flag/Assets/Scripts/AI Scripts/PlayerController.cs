@@ -17,9 +17,19 @@ public class PlayerController : CharacterController
 
     private void Update()
     {
-        if (m_CurrentState == BehaviourState.EBS_IN_PRISON) InPrison();
+        if (m_CurrentState == BehaviourState.EBS_IN_PRISON)
+        {
+            InPrison();
+            PlayerHUD.Instance.ShowPrisonText(true);
+        }
+        else PlayerHUD.Instance.ShowPrisonText(false);
+        if (m_CurrentState == BehaviourState.EBS_RETURNING_FROM_PRISON)
+        {
+            // solve player being always stuck in this state
+            if (m_Team.m_Zone.ZoneBoundary.Contains(m_Position)) m_CurrentState = BehaviourState.EBS_NEUTRAL;
+        }
 
-        Vector2 moveInput = new();
+            Vector2 moveInput = new();
         if (Input.GetKey(KeyCode.W))
         {
             moveInput.y += 1;

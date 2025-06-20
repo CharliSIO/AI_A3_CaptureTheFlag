@@ -21,7 +21,7 @@ public class Flag : MonoBehaviour
         if (CarryingCharacter)
         {
             // move with character
-            transform.position = CarryingCharacter.transform.position;
+            transform.position = new Vector3(CarryingCharacter.transform.position.x, CarryingCharacter.transform.position.y, transform.position.z);
         }
     }
 
@@ -57,6 +57,7 @@ public class Flag : MonoBehaviour
         OwningTeam.m_Flags.Add(this);
         OwningTeam.m_Zone.m_FlagZone.m_ContainedFlags.Add(this);
         CarryingCharacter = null;
+        GameManager.Instance.CheckIfGameWon();
     }
 
     // carrying player got tagged

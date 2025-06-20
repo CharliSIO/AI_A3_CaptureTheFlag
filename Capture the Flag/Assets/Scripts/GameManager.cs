@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 // Game manager
@@ -26,6 +27,9 @@ public class GameManager : SingletonPersistent<GameManager>
 
     [SerializeField] private GameObject CharacterPrefab;
     public GameObject FlagPrefab;
+
+    public Team WinningTeam;
+    public UnityEvent GameHasWinner;
 
     private void Start()
     {
@@ -106,6 +110,30 @@ public class GameManager : SingletonPersistent<GameManager>
             m_Teams[i].m_Zone.m_FlagZone.CreateFlags();
         }
     }
+
+    public void CheckIfGameWon()
+    {
+        foreach (var team in m_Teams)
+        {
+            if (team.m_Flags.Count == FlagCount * TeamCount)
+            {
+                WinningTeam = team;
+                GameHasWinner.Invoke();
+                break;
+            }
+        }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public static void LoadMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
     #endregion
 
     #region Menu Functions

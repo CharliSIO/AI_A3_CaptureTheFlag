@@ -20,7 +20,9 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (transform.position.x > 21 || transform.position.x < -21
+            || transform.position.y > 11 || transform.position.y < -11)
+            m_Controller.m_Position = Vector2.zero;
     }
 
     public Vector3 GetPosition()
