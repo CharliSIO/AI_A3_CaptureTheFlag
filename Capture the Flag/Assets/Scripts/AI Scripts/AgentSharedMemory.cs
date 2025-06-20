@@ -72,10 +72,12 @@ public class AgentSharedMemory : Singleton<AgentSharedMemory>
             var character = c.GetComponent<Character>();
             if (character.m_Controller.m_CurrentState == BehaviourState.EBS_IN_PRISON)
             {
-                if (_teamRescuing.m_Zone.m_Prison.m_ContainedCharacters.Contains(character))
+                if (_teamOwningPrison.m_Zone.m_Prison.m_ContainedCharacters.Contains(character))
                 {
-                    character.m_Controller.m_CurrentState = BehaviourState.EBS_RETURNING_FROM_PRISON;
-                    _teamRescuing.m_Zone.m_Prison.m_ContainedCharacters.Remove(character);
+                    character.EscapePrison();
+                    _teamOwningPrison.m_Zone.m_Prison.m_ContainedCharacters.Remove(character);
+                    _teamRescuing.MembersInPrison--;
+                    return;
                 }
             }
         }

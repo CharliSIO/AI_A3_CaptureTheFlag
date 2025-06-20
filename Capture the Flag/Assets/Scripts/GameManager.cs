@@ -56,26 +56,32 @@ public class GameManager : SingletonPersistent<GameManager>
         {
             for (int j = 0; j < TeamSize; j++)
             {
-                var newAgent = Instantiate(CharacterPrefab);
+                var newAgent = Instantiate(CharacterPrefab, new Vector3(
+                (i == 1 || i == 3 ? 5f : -5f) + j, (m_TeamCount > 2 ? (i == 2 || i == 3 ? -2.5f : 2.5f) : 0.0f) + j, -1.0f), 
+                Quaternion.identity);
                 Color teamColour = m_Teams[i].TeamColour;
                 newAgent.name = "Team " + i + " Member " + j.ToString();
 
-                newAgent.GetComponentInChildren<SpriteRenderer>().color = new(teamColour.r * 1.5f, teamColour.g * 1.5f, teamColour.b * 1.5f, teamColour.a * 2f);
-                newAgent.transform.position = new Vector3(
-                (i == 1 || i == 3 ? 5f : -5f) + j/2f, (m_TeamCount > 2 ? (i == 2 || i == 3 ? -2.5f : 2.5f) : 0.0f) + j / 2f, -1.0f);
+                newAgent.GetComponentInChildren<SpriteRenderer>().color = new(teamColour.r * 1.5f, teamColour.g * 1.5f, teamColour.b * 1.5f, 1.0f);
                 newAgent.GetComponent<Character>().m_Team = m_Teams[i];
                 newAgent.GetComponent<AgentController>().RandomiserNumber = i + j;
-                newAgent.GetComponent<PlayerController>().enabled = false;
                 m_Teams[i].m_TeamMembers.Add(newAgent);
 
                 if (i == 0 && j == 0)
                 {
                     newAgent.GetComponent<AgentController>().enabled = false;
-                    newAgent.GetComponent<PlayerController>().enabled = true;
                     newAgent.GetComponent<Character>().m_Controller = newAgent.GetComponent<PlayerController>();
                     PlayerFollowCam.Follow = newAgent.transform;
                 }
+                else
+                {
+                    newAgent.GetComponent<PlayerController>().enabled = false;
+                    newAgent.GetComponent<Character>().m_Controller = newAgent.GetComponent<AgentController>();
+                }
+                newAgent.GetComponent<CharacterController>().m_Team = m_Teams[i];
             }
+            m_Teams[i].m_Zone.m_FlagZone.OwningTeam = m_Teams[i];
+            m_Teams[i].m_Zone.m_Prison.OwningTeam = m_Teams[i];
             m_Teams[i].m_Zone.m_FlagZone.CreateFlags();
         }
     }

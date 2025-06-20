@@ -8,13 +8,6 @@ public class PlayerController : CharacterController
 {
 
     #region Weighting Variables
-    [SerializeField] private float m_SeekForceWeighting = 1.0f;
-    [SerializeField] private float m_FleeForceWeighting = 1.0f;
-    [SerializeField] private float m_ArriveForceWeighting = 1.0f;
-
-    [SerializeField] private float m_SeparationForceWeighting = 1.0f;
-    [SerializeField] private float m_CohesionForceWeighting = 1.0f;
-    [SerializeField] private float m_AlignmentForceWeighting = 1.0f;
 
     [SerializeField] private float m_SeekPrisonWeight = 1.0f;
     [SerializeField] private float m_SeekFlagsWeight = 1.0f;
@@ -40,11 +33,14 @@ public class PlayerController : CharacterController
     override protected void Start()
     {
         base.Start();
+        m_SeekForceWeighting = 1.0f;
         //StartCoroutine(UpdateStates(2.0f)); // update states only once every 2 seconds
     }
 
     private void Update()
     {
+        if (m_CurrentState == BehaviourState.EBS_IN_PRISON) InPrison();
+
         Vector2 moveInput = new();
         if (Input.GetKey(KeyCode.W))
         {
@@ -63,15 +59,22 @@ public class PlayerController : CharacterController
             moveInput.x += 1;
         }
         moveInput.Normalize();
+        moveInput *= m_MaxSpeed * 1.5f;
 
-        if (moveInput != Vector2.zero)
-        {
-            m_SteeringForce = Vector2.zero;
-            m_SteeringForce += Seek(m_Position + moveInput);
+        m_SteeringForce = Vector2.zero;
+        m_SteeringForce += Seek(m_Position + moveInput);
 
-            m_Velocity += m_SteeringForce;
-            MoveCharacter();
-        }
+        Vector2.ClampMagnitude(m_SteeringForce, m_MaxSteeringForce);
+        m_Velocity += m_SteeringForce;
+
+        MoveCharacter();
+    }
+
+    protected override void MoveCharacter()
+    {
+        Vector2.ClampMagnitude(m_Velocity, m_MaxSpeed + 0.5f);
+        m_Position += m_Speed * 1.5f * Time.deltaTime * m_Velocity;
+        gameObject.transform.position = (Vector3)m_Position;
     }
 
     // coroutine that calls the update states - so not every frame
@@ -88,7 +91,8 @@ public class PlayerController : CharacterController
     #region Locomotion
     Vector2 CalculateSteeringForce(Vector2 _desiredVel, float _forceweight)
     {
-       return (_desiredVel - m_Velocity) * _forceweight;
+        Vector2 steerForce = _desiredVel - m_Velocity;
+        return _forceweight * Time.deltaTime * Vector2.ClampMagnitude(steerForce, m_MaxSteeringForce);
     }
 
     Vector2 Seek(Vector2 _targetPos)
@@ -132,8 +136,8 @@ public class PlayerController : CharacterController
     {
         m_SeekPrisonWeight = UnityEngine.Random.Range(0.5f, 2.0f) + (m_CurrentState == BehaviourState.EBS_SEEK_PRISON ? 1.0f : 0.0f );
         m_SeekFlagsWeight = UnityEngine.Random.Range(0.5f, 2.0f) + (m_CurrentState == BehaviourState.EBS_SEEK_FLAGS ? 1.0f : 0.0f);
-        m_DefendPrisonWeight = UnityEngine.Random.Range(0.1f, 1.0f) + (m_CurrentState == BehaviourState.EBS_DEFEND_PRISON ? 1.0f : 0.0f);
-        m_DefendFlagsWeight = UnityEngine.Random.Range(0.1f, 1.0f) + (m_CurrentState == BehaviourState.EBS_DEFEND_FLAGS ? 1.0f : 0.0f); 
+        m_DefendPrisonWeight = UnityEngine.Random.Range(0.1f, 0.5f) + (m_CurrentState == BehaviourState.EBS_DEFEND_PRISON ? 1.0f : 0.0f);
+        m_DefendFlagsWeight = UnityEngine.Random.Range(0.1f, 0.5f) + (m_CurrentState == BehaviourState.EBS_DEFEND_FLAGS ? 1.0f : 0.0f); 
         m_ChaseEnemyWeight = UnityEngine.Random.Range(0.1f, 1.0f) + (m_CurrentState == BehaviourState.EBS_CHASE_ENEMY ? 1.0f : 0.0f); 
 
 
@@ -222,7 +226,7 @@ public class PlayerController : CharacterController
 
         for (int i = valueRanges.Count - 1; i >= 0; i--)
         {
-            if (chosenValue >= valueRanges[i].minVal && chosenValue <= valueRanges[i].maxVal)
+            if (chosenValue > valueRanges[i].minVal && chosenValue < valueRanges[i].maxVal)
             {
                 m_CurrentState = valueRanges[i].state;
                 return;
@@ -257,7 +261,9 @@ public class PlayerController : CharacterController
 
     private void InPrison()
     {
-
+        m_SeekForceWeighting = 0.0f;
+        m_FleeForceWeighting = 0.0f;
+        m_ArriveForceWeighting = 0.0f;
     }
 
     #endregion

@@ -20,14 +20,18 @@ public class Flag : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.TryGetComponent<Character>(out var character);
-        if (character && !character.m_HoldingFlag && !CarryingCharacter && character.m_Team != OwningTeam)
+        if (collision.gameObject.name == "BodyCollider")
         {
-            CarryingCharacter = character;
-            character.m_HoldingFlag = this;
-            character.m_Controller.m_CurrentState = BehaviourState.EBS_RETURNING_WITH_FLAG;
+            var character = collision.gameObject.GetComponentInParent<Character>();
+            if (character && !character.m_HoldingFlag && !CarryingCharacter && character.m_Team != OwningTeam)
+            {
+                CarryingCharacter = character;
+                character.m_HoldingFlag = this;
+                character.m_Controller.m_CurrentState = BehaviourState.EBS_RETURNING_WITH_FLAG;
+                OwningTeam.m_Zone.m_FlagZone.m_ContainedFlags.Remove(this);
+                PickupRadius.enabled = false;
+            }
         }
-        PickupRadius.enabled = false;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -41,10 +45,13 @@ public class Flag : MonoBehaviour
 
     public void FlagChangedTeam()
     {
+        PickupRadius.enabled = true;
+        OwningTeam.m_Flags.Remove(this);
         OwningTeam = CarryingCharacter.m_Team;
         gameObject.GetComponent<SpriteRenderer>().color = OwningTeam.TeamColour;
+        OwningTeam.m_Flags.Add(this);
+        OwningTeam.m_Zone.m_FlagZone.m_ContainedFlags.Add(this);
         CarryingCharacter = null;
-        PickupRadius.enabled = true;
     }
 
 }

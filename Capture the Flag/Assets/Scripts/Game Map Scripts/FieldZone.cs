@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Zone : MonoBehaviour
 {
-    public Bounds ZoneBoundary; // TODO: get rid of it bc it sucks
+    public Rect ZoneBoundary; // TODO: get rid of it bc it sucks
     [SerializeField] protected Team m_OwningTeam;
 
     public Team OwningTeam { get => m_OwningTeam; set => m_OwningTeam = value; }
@@ -18,14 +18,16 @@ public class FieldZone : Zone
 
     public void Setup()
     {
-        m_FlagZone.OwningTeam = OwningTeam;
-        if (OwningTeam == GameManager.Instance.m_Teams[1]) 
-            m_FlagZone.ZoneBoundary.center = new Vector3(m_FlagZone.ZoneBoundary.center.x * -1, m_FlagZone.ZoneBoundary.center.y, m_FlagZone.ZoneBoundary.center.z);
-        m_Prison.OwningTeam = OwningTeam;
-        if (OwningTeam == GameManager.Instance.m_Teams[1])
-            m_Prison.ZoneBoundary.center = new Vector3(m_Prison.ZoneBoundary.center.x * -1, m_Prison.ZoneBoundary.center.y, m_Prison.ZoneBoundary.center.z);
+        if (TryGetComponent<Renderer>(out var renderer))
+        {
+            Bounds bounds = renderer.bounds;
 
-        ZoneBoundary = new(transform.position, gameObject.transform.lossyScale);
+            Vector2 size2D = new Vector2(bounds.size.x, bounds.size.y);
+            Vector2 center2D = new Vector2(bounds.center.x, bounds.center.y);
+            Vector2 min = center2D - size2D / 2f;
+
+            ZoneBoundary = new Rect(min, size2D);
+        }
     }
 
     public bool IsPosInField(Vector3 _point)

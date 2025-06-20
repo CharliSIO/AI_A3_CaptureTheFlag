@@ -1,5 +1,86 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &663790156336373917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8930022201824077784}
+  - component: {fileID: 2527388223634639493}
+  - component: {fileID: 7125373837634464505}
+  m_Layer: 0
+  m_Name: BodyCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8930022201824077784
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663790156336373917}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9065368403947518688}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &2527388223634639493
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663790156336373917}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.6
+--- !u!114 &7125373837634464505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663790156336373917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7529fc83b2fd8e40a60f8e7ae429469, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5090469864472111927
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,6 +203,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5597832049812920612}
+  - {fileID: 8930022201824077784}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7671202033344327686
@@ -136,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b29145bb4bea354994cc3ef6a6e038b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Controller: {fileID: 6944494139529076459}
+  m_Controller: {fileID: 0}
   m_HoldingFlag: {fileID: 0}
 --- !u!114 &6944494139529076459
 MonoBehaviour:
@@ -153,17 +235,11 @@ MonoBehaviour:
   m_Velocity: {x: 0, y: 0}
   m_SteeringForce: {x: 0, y: 0}
   m_Position: {x: 0, y: 0}
-  m_DetectionRadius: {fileID: 0}
+  m_DetectionRadius: {fileID: 4196497264753840573}
   m_Speed: 2
   m_MaxSpeed: 3
-  m_MaxSteeringForce: 2
+  m_MaxSteeringForce: 3
   m_CurrentState: 0
-  m_SeekForceWeighting: 1
-  m_FleeForceWeighting: 1
-  m_ArriveForceWeighting: 1
-  m_SeparationForceWeighting: 1
-  m_CohesionForceWeighting: 1
-  m_AlignmentForceWeighting: 1
   m_SeekPrisonWeight: 1
   m_SeekFlagsWeight: 1
   m_DefendPrisonWeight: 1
@@ -173,6 +249,7 @@ MonoBehaviour:
   m_TargetPos: {x: 0, y: 0}
   m_FleeTargetPos: {x: 0, y: 0}
   m_TargetCharacter: {fileID: 0}
+  m_FleeCharacter: {fileID: 0}
 --- !u!114 &1941727878502754891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,17 +265,11 @@ MonoBehaviour:
   m_Velocity: {x: 0, y: 0}
   m_SteeringForce: {x: 0, y: 0}
   m_Position: {x: 0, y: 0}
-  m_DetectionRadius: {fileID: 0}
+  m_DetectionRadius: {fileID: 4196497264753840573}
   m_Speed: 2
   m_MaxSpeed: 3
-  m_MaxSteeringForce: 2
+  m_MaxSteeringForce: 3
   m_CurrentState: 0
-  m_SeekForceWeighting: 1
-  m_FleeForceWeighting: 1
-  m_ArriveForceWeighting: 1
-  m_SeparationForceWeighting: 1
-  m_CohesionForceWeighting: 1
-  m_AlignmentForceWeighting: 1
   m_SeekPrisonWeight: 1
   m_SeekFlagsWeight: 1
   m_DefendPrisonWeight: 1
@@ -237,7 +308,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

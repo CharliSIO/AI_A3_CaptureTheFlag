@@ -26,8 +26,7 @@ public class Field : MonoBehaviour
                 0.0f
             );
             zoneInstance.transform.localScale = new(0.5f, m_iZoneCount > 2 ? 0.5f : 1.0f, 1.0f);
-            if (i == 1 || i == 3) zoneInstance.transform.localScale = new(zoneInstance.transform.localScale.x * -1, zoneInstance.transform.localScale.y, 1.0f);
-            if (i == 2 || i == 3) zoneInstance.transform.localScale = new(zoneInstance.transform.localScale.x, zoneInstance.transform.localScale.y * -1, 1.0f);
+            if (i == 1 || i == 3) zoneInstance.transform.localScale = new(zoneInstance.transform.localScale.x * -1, zoneInstance.transform.localScale.y * -1, 1.0f);
 
             zoneInstance.GetComponent<SpriteRenderer>().color = GameManager.Instance.m_TeamColourList[i];
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 // BASE class for character controller
 // Character will have either AI_Controller OR PlayerController
@@ -28,16 +29,25 @@ public class CharacterController : MonoBehaviour
 
     public float m_Speed = 2.0f;
     public float m_MaxSpeed = 3.0f;
-    public float m_MaxSteeringForce = 2.0f;
+    public float m_MaxSteeringForce = 3.0f;
 
     public BehaviourState m_CurrentState;
     public Team m_Team;
 
 
+    protected float m_SeekForceWeighting = 0.0f;
+    protected float m_FleeForceWeighting = 0.0f;
+    protected float m_ArriveForceWeighting = 1.0f;
+    
+    protected float m_SeparationForceWeighting = 1.0f;
+    protected float m_CohesionForceWeighting = 1.0f;
+    protected float m_AlignmentForceWeighting = 1.0f;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected virtual void Start()
     {
-        m_Position = this.gameObject.transform.position;
+        m_Position = gameObject.transform.position;
     }
 
     // Update is called once per frame
@@ -46,11 +56,11 @@ public class CharacterController : MonoBehaviour
         
     }
 
-    protected void MoveCharacter()
+    protected virtual void MoveCharacter()
     {
         Vector2.ClampMagnitude(m_Velocity, m_MaxSpeed);
         m_Position += m_Speed * Time.deltaTime * m_Velocity;
-        this.gameObject.transform.position = (Vector3)m_Position;
+        gameObject.transform.position = (Vector3)m_Position;
     }
 
     public void FlagReturned()
@@ -62,5 +72,12 @@ public class CharacterController : MonoBehaviour
         {
             cont.DecideCurrentState();
         }
+    }
+
+    public void EscapePrison()
+    {
+        m_CurrentState = BehaviourState.EBS_RETURNING_FROM_PRISON;
+        m_SeekForceWeighting = 1.0f;
+        m_ArriveForceWeighting = 1.0f;
     }
 }
